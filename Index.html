@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title> Library Management System</title>
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+	<style>
+		    <style>
+       
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            color: #fff; 
+        }
+
+        .content {
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        #slider {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            margin: auto;
+            overflow: hidden;
+            transition: background-color 0.5s;
+        }
+
+        #slides {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slide {
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .slide img {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .yellow-bg {
+            background-color: #ff0;
+            color: #000; 
+        }
+
+      
+        .button {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .button button {
+            background-color: #ff0;
+            color: #000; 
+            padding: 10px 20px;
+            border: none;
+            margin: 0 10px;
+            text-decoration: none;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .button button:hover {
+            background-color: #000;
+            color: #ff0; 
+        }
+        nav a:hover{
+            color: orange;
+            border-bottom: 2px  orange;
+        }
+        .check{
+            padding: 17px;
+            border-radius: 6px;
+            border: none;
+            outline: none;
+        }
+    </style>
+	</style>
+	
+</head>
+<header class="header">
+	<a href="#" class="logo">LB</a>
+	<nav class="navbar">
+   			<a href="#"><i class="fa fa-fw fa-home"></i>Home</a>
+   			<a href="BookCat.html">Book Categories</a>
+   			<a href="NewCart.html">Cart</a>
+   			<a href="contact.html">Contact Us</a>
+	</nav>
+</header>
+	<body>
+		<div class="w3-content w3-section" >
+			<img class="mySlides" src="images/1.jpg" style="width:100%">
+			<img class="mySlides" src="images/2.jpg" style="width:100%">
+			<img class="mySlides" src="images/4.png" style="width:100%">
+			
+
+			<button class="w3-button w3-black w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
+            <button class="w3-button w3-black w3-display-right check" onclick="plusDivs(1)">&#10095;</button>
+
+			<div class="content">
+				<h1 class="heading">The Online Library <br> Management System</h1>
+			</div>
+			<div class="flippingCards">
+				
+			</div>
+		  </div>
+		
+		  <div class="content">
+			<h1 style="color: orange ;background-color:black; padding: 30px;" >The Best Online Book Library</h1>
+		</div>
+		<div id="slider" style="border-radius: 23px;  font: 1em sans-serif;"  class="yellow-bg">
+			<div id="slides" class="black-bg">
+			
+			</div>
+		</div>
+		<div class="button">
+		   <a href="NewCart.html"> <button style=" color: orange ;background-color:black;  text-shadow: 1px 1px 1px black; border-radius: 23px; border: 1px solid black;">Buy Our New Books</button></a>
+			<a href="BookCat.html"><button style="color: orange ;background-color:black;  text-shadow: 1px 1px 1px black; border-radius: 23px; border: 1px solid black;">Explore Book Categories</button> </a>
+
+		</div>
+
+		  <script>
+
+            // slider reference https://www.w3schools.com/howto/howto_js_slideshow.asp
+			var slideIndex = 1;
+			showDivs(slideIndex);
+			
+			function plusDivs(n) {
+			  showDivs(slideIndex += n);
+			}
+			
+			function showDivs(n) {
+			  var i;
+			  var x = document.getElementsByClassName("mySlides");
+			  if (n > x.length) {slideIndex = 1}
+			  if (n < 1) {slideIndex = x.length}
+			  for (i = 0; i < x.length; i++) {
+				x[i].style.display = "none";  
+			  }
+			  x[slideIndex-1].style.display = "block";  
+			}
+			 
+			  const imageFiles = [];
+        for (let i = 1; i <= 9; i++) {
+            imageFiles.push(`images/${i}.jpeg`);
+        }
+
+        
+        function createSlides() {
+            const slidesContainer = document.getElementById("slides");
+
+            
+            imageFiles.forEach((image, index) => {
+                const slide = document.createElement("div");
+                slide.classList.add("slide");
+                slide.innerHTML = `<img src="${image}" alt="Slide ${index + 1}">`;
+                slidesContainer.appendChild(slide);
+            });
+        }
+
+        
+        function changeBackgroundColor(index) {
+            const slider = document.getElementById("slider");
+            if (index % 3 === 0) {
+                slider.style.backgroundColor = "#ff0"; 
+            } else if (index % 3 === 1) {
+                slider.style.backgroundColor = "#000"; 
+            } else {
+                slider.style.backgroundColor = "#ff0"; 
+            }
+        }
+
+       
+        function startSlider() {
+            createSlides();
+
+            const slidesContainer = document.getElementById("slides");
+            let currentIndex = 0;
+
+            setInterval(() => {
+                currentIndex = (currentIndex + 1) % imageFiles.length;
+                slidesContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+                changeBackgroundColor(currentIndex);
+            }, 3000); 
+        }
+
+       
+        startSlider();
+
+        
+			</script>
+			
+  
+   <div style="background-color:#e5e5e5;text-align:center;padding:10px;margin-top:7px;">© copyright 2023</div>
+</body>
+</html>

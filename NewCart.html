@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookstore</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        nav a:hover{
+            color: orange;
+            border-bottom: solid  orange;
+        }
+        .available {
+        overflow-y: scroll;
+        height: 600px; /* Adjust the height as needed */
+    }
+    </style>
+</head>
+<body>
+  <header class="header">
+    <a href="#" class="logo">LB</a>
+    <nav class="navbar">
+           <a href="INDEX.HTML"><i class="fa fa-fw fa-home"></i>Home</a>
+           <a href="BookCat.html">Book Categories</a>
+           <a href="NewCart.html">Cart</a>
+           <a href="contact.html">Contact Us</a>
+    </nav>
+  </header>
+  
+
+    <div class="container mt-5">
+        <h1 style="font-size: 50px; text-shadow: 1px 1px 2px black;">Bookstore</h1>
+        <div class="row">
+            <div class="col-md-6 available">
+                <h2 style="font-size: 50px; text-shadow: 1px 1px 2px black;">Available Books</h2>
+                <ul id="bookList" class="list-group" >
+                  
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h2 style="font-size: 50px; text-shadow: 1px 1px 2px black;">Selected Book Details</h2>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="selectedBookDetails">
+                       
+                    </tbody>
+                </table>
+                <div>
+                    <strong>Total Price: $<span id="totalPrice">0.00</span></strong>
+                </div>
+                <button class="btn btn-primary mt-2" style=" color: orange ;background-color:black;  text-shadow: 1px 1px 1px black; border-radius: 23px; border: 1px solid black;" onclick="proceedToPayment()">Proceed to Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
+        const books = [
+            {
+                "id": 1,
+                "title": "To Kill a Mockingbird",
+                "author": "Harper Lee",
+                "category": "Fiction",
+                "price": 12.99,
+                "description": "Classic novel set in the American South during the 1930s.",
+                "cover_image": "images/to_kill_a_mockingbird.jpg"
+            },
+            {
+                "id": 2,
+                "title": "1984",
+                "author": "George Orwell",
+                "category": "Dystopian",
+                "price": 9.99,
+                "description": "Classic dystopian novel about totalitarianism and surveillance.",
+                "cover_image": "images/1984.jpg"
+            },
+            {
+                "id": 1,
+                "title": "To Kill a Mockingbird",
+                "author": "Harper Lee",
+                "category": "Fiction",
+                "price": 12.99,
+                "description": "Classic novel set in the American South during the 1930s.",
+                "cover_image": "images/to_kill_a_mockingbird.jpg"
+            },
+            {
+                "id": 2,
+                "title": "1984",
+                "author": "George Orwell",
+                "category": "Dystopian",
+                "price": 9.99,
+                "description": "Classic dystopian novel about totalitarianism and surveillance.",
+                "cover_image": "images/1984.jpg"
+            },
+            {
+                "id": 1,
+                "title": "To Kill a Mockingbird",
+                "author": "Harper Lee",
+                "category": "Fiction",
+                "price": 12.99,
+                "description": "Classic novel set in the American South during the 1930s.",
+                "cover_image": "images/to_kill_a_mockingbird.jpg"
+            },
+            {
+                "id": 2,
+                "title": "1984",
+                "author": "George Orwell",
+                "category": "Dystopian",
+                "price": 9.99,
+                "description": "Classic dystopian novel about totalitarianism and surveillance.",
+                "cover_image": "images/1984.jpg"
+            },
+        ];
+
+        const cart = [];
+        let totalSelectedPrice = 0;
+
+        function displayBooks() {
+            const bookList = document.getElementById("bookList");
+            bookList.innerHTML = "";
+
+            books.forEach(book => {
+                const listItem = document.createElement("li");
+                listItem.classList.add("list-group-item");
+                listItem.innerHTML = `
+                    <h3>${book.title}</h3>
+                    <p>Author: ${book.author}</p>
+                    <p>Category: ${book.category}</p>
+                    <p>Price: $${book.price.toFixed(2)}</p>
+                    <button class="btn btn-primary" style=" color: orange ;background-color:black;  text-shadow: 1px 1px 1px black; border-radius: 23px; border: 1px solid black;" onclick="showBookDetails(${book.id})">Select</button>
+                `;
+
+                bookList.appendChild(listItem);
+            });
+        }
+
+        function showBookDetails(bookId) {
+            const selectedBook = books.find(book => book.id === bookId);
+
+            const detailsElement = document.getElementById("selectedBookDetails");
+
+            const detailsRow = document.createElement("tr");
+            detailsRow.id = `bookRow_${selectedBook.id}`;
+            detailsRow.innerHTML = `
+                <td>${selectedBook.title}</td>
+                <td>${selectedBook.author}</td>
+                <td>${selectedBook.category}</td>
+                <td>$${selectedBook.price.toFixed(2)}</td>
+                <td><input type="number" id="quantity_${selectedBook.id}" value="1" min="1" onchange="updateQuantity(${selectedBook.id}, this.value)"></td>
+                <td>
+                    <button class="btn btn-danger" onclick="removeFromCart(${selectedBook.id})">Delete</button>
+                </td>
+            `;
+
+            detailsElement.appendChild(detailsRow);
+
+            // Add the book to the cart when selected
+            addToCart(selectedBook.id);
+        }
+
+        function updateQuantity(bookId, quantity) {
+            const cartItem = cart.find(item => item.id === bookId);
+
+            if (cartItem) {
+                cartItem.quantity = parseInt(quantity, 10);
+                updateSelectedBooks();
+            }
+        }
+
+        function addToCart(bookId) {
+            const quantityInput = document.getElementById(`quantity_${bookId}`);
+            const quantity = parseInt(quantityInput.value);
+            const selectedBook = books.find(book => book.id === bookId);
+
+            const existingCartItem = cart.find(item => item.id === bookId);
+
+            if (existingCartItem) {
+                existingCartItem.quantity += quantity;
+            } else {
+                cart.push({
+                    ...selectedBook,
+                    quantity
+                });
+            }
+
+            updateSelectedBooks();
+        }
+
+        function removeFromCart(bookId) {
+            const index = cart.findIndex(item => item.id === bookId);
+
+            if (index !== -1) {
+                cart.splice(index, 1);
+                updateSelectedBooks();
+            }
+        }
+
+        function updateSelectedBooks() {
+            const detailsElement = document.getElementById("selectedBookDetails");
+            detailsElement.innerHTML = "";
+            totalSelectedPrice = 0;
+
+            cart.forEach(item => {
+                const detailsRow = document.createElement("tr");
+                detailsRow.id = `bookRow_${item.id}`;
+                detailsRow.innerHTML = `
+                    <td>${item.title}</td>
+                    <td>${item.author}</td>
+                    <td>${item.category}</td>
+                    <td>$${item.price.toFixed(2)}</td>
+                    <td><input type="number" id="quantity_${item.id}" value="${item.quantity}" min="1" onchange="updateQuantity(${item.id}, this.value)"></td>
+                    <td>
+                        <button class="btn btn-danger" onclick="removeFromCart(${item.id})">Delete</button>
+                    </td>
+                `;
+                detailsElement.appendChild(detailsRow);
+
+                totalSelectedPrice += item.price * item.quantity;
+            });
+
+            const totalPriceElement = document.getElementById("totalPrice");
+            totalPriceElement.textContent = totalSelectedPrice.toFixed(2);
+        }
+
+        function proceedToPayment() {
+           
+            localStorage.setItem('cart', JSON.stringify(cart));
+            localStorage.setItem('totalPrice', totalSelectedPrice.toFixed(2));
+
+           
+            window.location.href = 'payment.html';
+        }
+
+        displayBooks();
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</body>
+<div style="background-color:#e5e5e5;text-align:center;padding:10px;margin-top:7px;">© copyright 2023</div>
+</html>

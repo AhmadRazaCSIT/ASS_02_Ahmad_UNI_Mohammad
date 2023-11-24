@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Receipt</title>
+   
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="payment.css">
+    <style>
+      
+    </style>
+</head>
+<body>
+
+    <div class="container mt-5">
+        <h2 class="mb-4" style="font-size: 50px; text-shadow: 1px 1px 2px black;">Payment Receipt</h2>
+
+        <table class="table mt-4">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Quantity</th>
+                </tr>
+            </thead>
+            <tbody id="receipt-items"></tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2"><strong>Total:</strong></td>
+                    <td id="total-amount">$0.00</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <p class="mt-4">
+            <a href="#" class="btn btn-primary" style="color: orange; background-color: black;" onclick="downloadReceipt()">Download Receipt</a>
+            <a href="index.html" style="color: orange; background-color: black;" class="btn btn-primary ml-2">Return to Home</a>
+        </p>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <script>
+        function getCartData() {
+            const cartData = localStorage.getItem('cart');
+            return cartData ? JSON.parse(cartData) : [];
+        }
+
+        function generateReceipt() {
+            const receiptContainer = document.getElementById('receipt-items');
+            const totalAmountElement = document.getElementById('total-amount');
+            let totalAmount = 0;
+
+            const cartItems = getCartData();
+
+            receiptContainer.innerHTML = '';
+
+            cartItems.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.id}</td>
+                    <td>${item.title}</td>
+                    <td>$${item.price.toFixed(2)}</td>
+                    <td>${item.quantity}</td>
+                `;
+                receiptContainer.appendChild(row);
+
+                totalAmount += item.price * item.quantity;
+            });
+
+            totalAmountElement.textContent = `$${totalAmount.toFixed(2)}`;
+        }
+
+        function downloadReceipt() {
+            const receiptHtml = document.documentElement.outerHTML;
+            const blob = new Blob([receiptHtml], { type: 'text/html' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = 'payment_receipt.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        generateReceipt();
+    </script>
+
+</body>
+</html>

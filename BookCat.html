@@ -1,0 +1,115 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookstore</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+   <link rel="stylesheet" href="BookCat.css">
+</head>
+
+<body>
+    <header class="header">
+        <a href="#" class="logo">LB</a>
+        <nav class="navbar">
+            <a href="INDEX.HTML"><i class="fa fa-fw fa-home"></i>Home</a>
+            <a href="BookCat.html">Book Categories</a>
+            <a href="NewCart.html">Cart</a>
+            <a href="contact.html">Contact Us</a>
+        </nav>
+    </header>
+   
+
+    <main>
+        <section id="categories">
+            <h2 style="font-size: 50px; text-shadow: 1px 1px 2px black;">Categories</h2>
+            <ul class="category-list" id="categoryList">
+                
+            </ul>
+        </section>
+
+        <section id="books">
+            <h2 style="font-size: 50px; text-shadow: 1px 1px 2px black;" >Books</h2>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search for a book...">
+            <ul class="book-list" id="bookList" onclick="jumbToOtherWindow()">
+               
+            </ul>
+        </section>
+    </main>
+
+   
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+      
+        fetch('book.json')
+            .then(response => response.json())
+            .then(data => {
+               
+                const categories = [...new Set(data.map(book => book.category))];
+
+                const categoryList = document.getElementById('categoryList');
+                categories.forEach(category => {
+                    const li = document.createElement('li');
+                    li.classList.add('category-item');
+                    li.textContent = category;
+                    
+                    li.addEventListener('click', () => filterBooksByCategory(category));
+                    categoryList.appendChild(li);
+                });
+
+              
+                displayBooks(data);
+
+                function filterBooksByCategory(category) {
+                    const filteredBooks = data.filter(book => book.category === category);
+                    displayBooks(filteredBooks);
+                }
+
+               
+                function searchBooks() {
+                    const searchInput = document.getElementById('searchInput').value.toLowerCase();
+                    const filteredBooks = data.filter(book =>
+                        book.title.toLowerCase().includes(searchInput) ||
+                        book.author.toLowerCase().includes(searchInput) ||
+                        book.category.toLowerCase().includes(searchInput)
+                    );
+                    displayBooks(filteredBooks);
+                }
+
+            
+                function displayBooks(books) {
+                    const bookList = document.getElementById('bookList');
+                    bookList.innerHTML = ''; 
+
+                    books.forEach(book => {
+                        const li = document.createElement('li');
+                        li.classList.add('book-item');
+                        li.innerHTML = `
+                            <img src="${'images/4.jpeg'}" alt="${book.title}" style="max-width: 100%;">
+                            <h3>${book.title}</h3>
+                            <p>${book.author}</p>
+                            <p>${book.price.toFixed(2)} USD</p>
+                            <p>${book.description}</p>
+                        `;
+                        bookList.appendChild(li);
+                    });
+                }
+
+              
+                document.getElementById('searchInput').addEventListener('input', searchBooks);
+            })
+            .catch(error => console.error('Error fetching books:', error));
+            const jumbToOtherWindow = ()=>window.location.href = 'NewCart.html'
+    </script>
+     <div style="background-color:#e5e5e5;text-align:center;padding:10px;margin-top:7px;">© copyright 2023</div>
+</body>
+
+</html>
